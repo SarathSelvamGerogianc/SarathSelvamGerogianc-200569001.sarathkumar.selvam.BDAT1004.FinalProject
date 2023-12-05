@@ -1,12 +1,13 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import to_date
 from pyspark.sql.types import StringType, StructField, StructType
-
+from datetime import datetime,timedelta
 # Initialize SparkSession
 spark = SparkSession.builder \
     .appName("CSV to Parquet Conversion") \
     .getOrCreate()
 
+current_date = (datetime.utcnow() - timedelta(days=1)).date()
 # Define the schema for the CSV data
 schema = StructType([
     StructField("jobId", StringType(), True),
@@ -27,8 +28,8 @@ schema = StructType([
 ])
 
 # S3 path to the CSV file
-s3_input_path = "s3://data-programming-bdat1004-web-app/temp/jobs_export/dt=2023-12-04/"
-s3_output_path = "s3://data-programming-bdat1004-web-app/temp/processed_jobs_export/dt=2023-12-04/"
+s3_input_path = f"s3://data-programming-bdat1004-web-app/temp/jobs_export/dt={str(current_date)}/"
+s3_output_path = f"s3://data-programming-bdat1004-web-app/temp/processed_jobs_export/dt={str(current_date)}/"
 
 
 # Read CSV file into Spark DataFrame with defined schema
